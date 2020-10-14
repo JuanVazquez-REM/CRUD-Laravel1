@@ -14,7 +14,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        return Post::all();
     }
 
     /**
@@ -22,20 +22,27 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $Post = new Post;
+        $Post->user_id = $request->input('user_id');
+        $Post->titulo = $request->input('titulo');
+        $Post->contenido = $request->input('contenido');
+
+        $Post->save();
+
+        return response()->json($Post, 201);
     }
 
     /**
      * Store a newly created resource in storage.
-     *
+     * @param  \App\Post
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
@@ -44,20 +51,9 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function find($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Post $post)
-    {
-        //
+        return Post::find($id);
     }
 
     /**
@@ -67,9 +63,16 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request,$id)
     {
-        //
+        $Post = Post::find($id);
+        $Post->user_id = $request->input('user_id');
+        $Post->titulo = $request->input('titulo');
+        $Post->contenido = $request->input('contenido');
+
+        $Post->save();
+
+        return response()->json($request, 200);
     }
 
     /**
@@ -78,8 +81,18 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function delete($id)
     {
-        //
+        $estado;
+        $sql=\App\Post::where('id','=',$id);
+
+        if(Post::find($id)){
+            $sql ->delete();
+            $estado=200;
+        }else{
+            $estado=400;
+        }
+        
+        return response()->json(null, $estado);
     }
 }
