@@ -2,110 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use App\Comment;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return Comment::all();
+    public function comments(){
+        $comments = DB::table('comments')->get(); 
+        return response()->json($comments, 200); 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {
-        $Comment = new Comment;
-        $Comment->Comment_id = $request->input('Comment_id');
-        $Comment->nombre = $request->input('nombre');
-        $Comment->email = $request->input('email');
-        $Comment->contenido = $request->input('contenido');
+    public function comment_id($id){ 
+        $comments = DB::table('comments')->where('id',$id)->get(); 
 
-        $Comment->save();
-
-        return response()->json($Comment, 201);
+        return response()->json($comments, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function insertar(Request $request){
+        $request_comment = new Comment; 
+
+        $request_comment->post_id = $request->input('post_id'); 
+        $request_comment->nombre = $request->input('nombre');
+        $request_comment->email = $request->input('email');
+        $request_comment->contenido = $request->input('contenido');
+
+        $request_comment->save();  
+
+        return response()->json($request,201); 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function find($id)
-    {
-        return Comment::find($id);
+    public function actualizar(Request $request,$id){
+
+        $post_id = $request->input('post_id'); 
+        $nombre = $request->input('nombre');
+        $email = $request->input('email');
+        $contenido = $request->input('contenido');
+
+        Comment::where('id', $id)->update(['post_id'=>$post_id,'nombre'=>$nombre,'email'=> $email ,'contenido'=> $contenido]);
+        return response()->json($request,200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Comment $comment)
-    {
-        //
+    public function borrar_comment($id){
+            $comment = Comment::where('id','=',$id); 
+            $comment->delete(); 
+            
+        return response()->json();   
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $Comment = Comment::find($id);
-        $Comment->post_id = $request->input('post_id');
-        $Comment->nombre = $request->input('nombre');
-        $Comment->email = $request->input('email');
-        $Comment->contenido = $request->input('contenido');
+    
 
-        $Comment->save();
+    public function comments_posts_id($id){
+        //Mostrar los comentarios de un determinado posts
+        $comments = DB::table('comments')
+        ->join('posts', 'posts.id', '=' , 'comments.post_id')
+        ->where('posts.id', '=' , $id)
+        ->select('comments.*')
+        ->get();
 
-        return response()->json($request, 200);
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function delete($id)
-    {
-        $estado;
-        $sql=\App\Comment::where('id','=',$id);
-
-        if(Comment::find($id)){
-            $sql ->delete();
-            $estado=200;
-        }else{
-            $estado=400;
-        }
-        
-        return response()->json(null, $estado);
+        return response() ->json($comments,200);
     }
 }

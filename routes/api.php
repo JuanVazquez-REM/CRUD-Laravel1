@@ -25,36 +25,38 @@ Route::get('/miprimerenrutamiento', function () {
 });
 
 //TABLA COMMENTS
-Route::get('comments/', 'CommentController@index');
-
-Route::get('comments/{id}', 'CommentController@find');
-
-Route::post('comments', 'CommentController@create');
-
-Route::put('comments/{id}', 'CommentController@update');
-
-Route::delete('comments/{id}', 'CommentController@delete');
+Route::get('comments/', 'CommentController@comments'); 
+Route::get('comments/{id}', 'CommentController@comment_id');
+Route::post('comments', 'CommentController@insertar');
+Route::put('comments/{id}', 'CommentController@actualizar');
+Route::delete('comments/{id}', 'CommentController@borrar_comment');
 
 //TABLA POSTS
-Route::get('posts/', 'PostController@index');
-
-Route::get('posts/{id}', 'PostController@find');
-
-Route::post('posts', 'PostController@create');
-
-Route::put('posts/{id}', 'PostController@update');
-
-Route::delete('posts/{id}', 'PostController@delete');
+Route::get('posts/', 'PostController@posts');
+Route::get('posts/{id}', 'PostController@post_id');
+Route::post('post', 'PostController@insertar');
+Route::put('posts/{id}', 'PostController@actualizar');
+Route::delete('posts/{id}', 'PostController@borrar_post');
 
 //TABLA USERS
-Route::get('users/', 'UserController@index');
+Route::get('users/', 'UserController@user');
+Route::get('users/{id}', 'UserController@user_id');
+Route::post('users', 'UserController@insertar');
+Route::put('users/{id}', 'UserController@actualizar');
+Route::delete('users/{id}', 'UserController@borrar_user');
 
-Route::get('users/{id}', 'UserController@find');
+//Comentarios de un determinado post
+Route::get('comments/post/{id}', 'CommentController@comments_posts_id');
 
-Route::post('users', 'UserController@create');
+//Posts de un determinado user
+Route::get('posts/user/{id}', 'UserController@posts_user_id');
 
-Route::put('users/{id}', 'UserController@update');
+//Todos los posts con sus respectivos comentarios
+Route::get('posts/comments/all', 'PostController@posts_comments');
 
-Route::delete('users/{id}', 'UserController@delete');
+//Todos los users y su posts asociados
+Route::get('posts/users/all', 'UserController@users_posts');
+
+
 
 

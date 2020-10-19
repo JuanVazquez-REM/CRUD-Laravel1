@@ -1,96 +1,70 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use DB;
 use App\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-        /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return User::all();
+    public function user(){
+        $users = DB::table('users')->get(); 
+        return response()->json($users, 200); 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {
-        $User = new User;
-        $User->name = $request->input('name');
-        $User->email = $request->input('email');
+    public function user_id($id){ 
+        $users = DB::table('users')->where('id',$id)->get(); 
 
-        $User->save();
-
-        return response()->json($User, 201);
+        return response()->json($users, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param  \App\User
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
+    public function insertar(Request $request){
+        $request_user = new User; 
 
+        $request_user->name = $request->input('name'); 
+        $request_user->email = $request->input('email');
+        $request_user->password = "$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi";
+
+        $request_user->save();  
+
+        return response()->json($request,201); 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\User  $User
-     * @return \Illuminate\Http\Response
-     */
-    public function find($id)
-    {
-        return User::find($id);
-    }
+    public function actualizar(Request $request,$id){
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $User
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request,$id)
-    {
-        $User = User::find($id);
-        $User->name = $request->input('name');
-        $User->email = $request->input('email');
-
-        $User->save();
-
-        return response()->json($request, 200);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User  $User
-     * @return \Illuminate\Http\Response
-     */
-    public function delete($id)
-    {
-        $estado;
-        $sql=\App\User::where('id','=',$id);
-
-        if(User::find($id)){
-            $sql ->delete();
-            $estado=200;
-        }else{
-            $estado=400;
-        }
+        $name = $request->input('name'); 
+        $email = $request->input('email');
+        $password = $request->input('password');
         
-        return response()->json(null, $estado);
+
+        User::where('id', $id)->update(['name'=>$name,'email'=> $email ,'password'=> $password]);
+        return response()->json($request,200);
+    }
+
+    public function borrar_user($id){
+            $user = User::where('id','=',$id); 
+            $user->delete(); 
+            
+        return response()->json();   
+    }
+
+    public function posts_user_id($id){
+        //Mostrar los comentarios de un determinado posts
+        $posts = DB::table('users')
+        ->join('posts', 'users.id', '=' ,'posts.user_id')
+        ->where('users.id', '=' , $id)
+        ->select('posts.*')
+        ->get();
+
+
+        return response() ->json($posts,200);
+    }
+
+    public function users_posts(){
+        $posts = User::with('post')->get(); //Mostrar la tabla users con sus respestivos posts asociados, en formato json  
+
+        return response()->json($posts,200);
     }
 }
 

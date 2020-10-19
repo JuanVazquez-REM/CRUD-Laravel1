@@ -2,97 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use App\Post;
+use App\Comment;
 use Illuminate\Http\Request;
+
+//Nota
+//Al usar DB no es la mas correcta si ya contamos con las relaciones de Eloquent
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return Post::all();
+    public function posts(){
+        $posts = DB::table('posts')->get(); //solicito toda la tabla post de mi BD
+        return response()->json($posts, 200); //la guardo en una variable, donde despues rotorno el tabla 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {
-        $Post = new Post;
-        $Post->user_id = $request->input('user_id');
-        $Post->titulo = $request->input('titulo');
-        $Post->contenido = $request->input('contenido');
-
-        $Post->save();
-
-        return response()->json($Post, 201);
+    public function post_id($id){ 
+        $posts = DB::table('posts')->where('id','=',$id)->get(); //busco en mi tabla post un $id que sea igual a id, y despues me recojo todos los datos correpondientes a es id
+        return response()->json($posts, 200); //Retorno request y un codigo de estado
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param  \App\Post
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
+    public function insertar(Request $request){
+        $request_post = new Post; //Intancio el objeto post
 
+        $request_post->user_id = $request->input('user_id'); //Guardo cada uno de los parametros y le asigno un lugar
+        $request_post->titulo = $request->input('titulo');
+        $request_post->contenido = $request->input('contenido');
+
+        $request_post->save();  //despues los guardo en mi BD
+
+        return response()->json($request,201); //retorno el request, junto con un codigo de estado
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function find($id)
-    {
-        return Post::find($id);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request,$id)
-    {
-        $Post = Post::find($id);
-        $Post->user_id = $request->input('user_id');
-        $Post->titulo = $request->input('titulo');
-        $Post->contenido = $request->input('contenido');
-
-        $Post->save();
-
-        return response()->json($request, 200);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function delete($id)
-    {
-        $estado;
-        $sql=\App\Post::where('id','=',$id);
-
-        if(Post::find($id)){
-            $sql ->delete();
-            $estado=200;
-        }else{
-            $estado=400;
-        }
+    public function actualizar(Request $request,$id){
         
-        return response()->json(null, $estado);
+        $user_id = $request->input('user_id'); //Guardo cada uno de los parametros y le asigno un lugar
+        $titulo = $request->input('titulo');
+        $contenido = $request->input('contenido');
+
+        Post::where('id', $id)->update(['user_id'=>$user_id,'titulo'=>$titulo, 'contenido'=> $contenido]);
+        return response()->json($request,200);
+    }
+
+    public function borrar_post($id){
+            $post = Post::where('id','=',$id); //se busca el post correspondieteal id
+            $post->delete(); //Se borrar el post
+            
+        return response()->json();   //Se manda un codigo de estado
+    }
+
+    public function posts_comments(){
+        $post = post::with('comment')->get(); //Mostrar la tabla posts con la tabla comment, tomando en cuenta la relacion de estas mismas  
+        
+        return response()->json($post,200);
     }
 }
