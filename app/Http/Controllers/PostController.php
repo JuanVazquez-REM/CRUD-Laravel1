@@ -13,12 +13,12 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
     public function posts(){
-        $posts = DB::table('posts')->get(); //solicito toda la tabla post de mi BD
+        $posts = Post::select()->get(); //solicito toda la tabla post de mi BD
         return response()->json($posts, 200); //la guardo en una variable, donde despues rotorno el tabla 
     }
 
     public function post_id($id){ 
-        $posts = DB::table('posts')->where('id','=',$id)->get(); //busco en mi tabla post un $id que sea igual a id, y despues me recojo todos los datos correpondientes a es id
+        $posts = Post::table()->where('id','=',$id)->get(); //busco en mi tabla post un $id que sea igual a id, y despues me recojo todos los datos correpondientes a es id
         return response()->json($posts, 200); //Retorno request y un codigo de estado
     }
 

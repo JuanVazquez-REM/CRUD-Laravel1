@@ -9,12 +9,12 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     public function user(){
-        $users = DB::table('users')->get(); 
+        $users = User::select()->get(); 
         return response()->json($users, 200); 
     }
 
     public function user_id($id){ 
-        $users = DB::table('users')->where('id',$id)->get(); 
+        $users = User::select()->where('id',$id)->get(); 
 
         return response()->json($users, 200);
     }
@@ -66,5 +66,8 @@ class UserController extends Controller
 
         return response()->json($posts,200);
     }
+
+
+
 }
 

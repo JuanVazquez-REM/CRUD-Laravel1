@@ -48,14 +48,18 @@ Route::delete('users/{id}', 'UserController@borrar_user');
 //Comentarios de un determinado post
 Route::get('comments/post/{id}', 'CommentController@comments_posts_id');
 
+//Comentarios de un determinado user
+Route::get('comments/user/{id}', 'CommentController@comments_user_id');
+
 //Posts de un determinado user
 Route::get('posts/user/{id}', 'UserController@posts_user_id');
 
 //Todos los posts con sus respectivos comentarios
 Route::get('posts/comments/all', 'PostController@posts_comments');
 
-//Todos los users y su posts asociados
+//Todos los users y sus posts asociados
 Route::get('posts/users/all', 'UserController@users_posts');
+
 
 
 
