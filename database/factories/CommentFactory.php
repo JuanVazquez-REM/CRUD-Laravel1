@@ -9,7 +9,7 @@ $factory->define(Comment::class, function (Faker $faker) {
     return [
         'post_id'=> $faker->numberBetween(1,20),
         'nombre' => $faker->title,
-        'user_id' => $faker->numberBetween(1,10),
+        'persona_id' => $faker->numberBetween(1,15),
         'contenido' => $faker->paragraph,
     ];
 });

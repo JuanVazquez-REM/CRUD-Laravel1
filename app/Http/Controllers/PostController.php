@@ -12,6 +12,14 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    public function index(Request $request){
+        $sql = Post::all();
+
+        //dd($sql); //generar un log, con lo que esta sucediento del lado del servidor,Esto funciona como un die.
+
+        Log::debug('Verificando la funcion index',["request" => $request, "sql" => $sql]); //podemos clasificar los de log 
+    }
+
     public function posts(){
         $posts = Post::select()->get(); //solicito toda la tabla post de mi BD
         return response()->json($posts, 200); //la guardo en una variable, donde despues rotorno el tabla 
